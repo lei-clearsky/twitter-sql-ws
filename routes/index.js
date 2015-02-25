@@ -63,29 +63,65 @@ router.post('/submit', function(req, res) {
   //   // Ooops, do some error-handling
 
   // })
+  // var existingUserID = -1;
+
+  // tweetSql.User.findAll({where:{name: name}})
+  // .complete(function(err, userName){
+  //   if (err) {
+  //     tweetSql.User
+  //     .create({ name: name, pictureUrl: NULL })
+  //     .then(function(newUser){
+
+  //       tweetSql.Tweet
+  //       .create({ UserId: newUser.id, tweet: text })
+  //       .then(function(newTweet) {
+  //         io.sockets.emit('new_tweet', {heading: 'New Tweet', id: newTweet.id, name: name, text: newTweet.tweet});
+  //         res.redirect('/');
+  //       }).catch(function(error) {
+  //       // Ooops, do some error-handling
+
+  //       });        
+  //     });
+
+  //   } else {
+  //     existingUserID = userName.shift().dataValues.id;
+  //     // console.log(existingUserID);
+  //     tweetSql.Tweet
+  //     .create({ UserId: existingUserID, tweet: text })
+  //     .then(function(newTweet) {
+  //       // tweetSql.Tweet.findAll({include: [{model: tweetSql.User, where: {id: id}}]}).complete(function(err, tweets){
+  //       //   res.render( 'index', { title: 'Twitter.js - Posts by ' + name, name: name, tweets: tweets} );
+  //       // });
+  //       io.sockets.emit('new_tweet', {heading: 'New Tweet', id: newTweet.id, name: name, text: newTweet.tweet});
+  //       res.redirect('/');
+  //     }).catch(function(error) {
+  //     // Ooops, do some error-handling
+
+  //     });
+  //   }
+
+  // });
   var existingUserID = -1;
 
   tweetSql.User.findAll({where:{name: name}})
   .complete(function(err, userName){
-    if (err) {
-      tweetSql.User.create({ UserId: autoincrement, name: name });
-      // find new user id
-      var newUserId = ...
-      // create
-      tweetSql.Tweet
-      .create({ UserId: newUserId, tweet: text })
-      .then(function(newTweet) {
-        // tweetSql.Tweet.findAll({include: [{model: tweetSql.User, where: {id: id}}]}).complete(function(err, tweets){
-        //   res.render( 'index', { title: 'Twitter.js - Posts by ' + name, name: name, tweets: tweets} );
-        // });
-        io.sockets.emit('new_tweet', {heading: 'New Tweet', id: newTweet.id, name: name, text: newTweet.tweet});
-        res.redirect('/');
-      }).catch(function(error) {
-      // Ooops, do some error-handling
+    if (!userName[0]){
+      tweetSql.User
+      .create({ name: name, pictureUrl: 'NULL' })
+      .then(function(newUser){
 
+        tweetSql.Tweet
+        .create({ UserId: newUser.id, tweet: text })
+        .then(function(newTweet) {
+          io.sockets.emit('new_tweet', {heading: 'New Tweet', id: newTweet.id, name: name, text: newTweet.tweet});
+          res.redirect('/');
+        }).catch(function(error) {
+        // Ooops, do some error-handling
+
+        });        
       });
-    } else {
-      existingUserID = userName.shift().dataValues.id;
+    } else{
+      existingUserID = userName[0].dataValues.id;
       // console.log(existingUserID);
       tweetSql.Tweet
       .create({ UserId: existingUserID, tweet: text })
@@ -100,23 +136,7 @@ router.post('/submit', function(req, res) {
 
       });
     }
-
   });
-
-
-  
-
-
-
-  // .build({ tweet: text, name: name })
-  // .save()
-  // .then(function(newTweet) {
-  //   io.sockets.emit('new_tweet', {heading: 'New Tweet', id: newTweet.id, name: newTweet.name, text: newTweet.tweet});
-  //   res.redirect('/');
-  // }).catch(function(error) {
-  //   // Ooops, do some error-handling
-
-  // })
 
 });
 
